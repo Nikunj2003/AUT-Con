@@ -44,16 +44,17 @@ function App() {
 
   // Handle node interactions
   const handleNodeInteraction = useCallback(async (node, nodeType) => {
+    // Only proceed with command execution if the node has a command
+    if (!node.command) {
+      console.log(`Expansion/selection event for: ${node.title}`);
+      return;
+    }
+
     console.debug('Node interaction:', node.title, nodeType);
     addToCommandLog(`Executing: ${node.title}`, 'command');
     
     try {
-      // Execute the actual command if it exists
-      if (node.command && systemCommands[node.command]) {
-        systemCommands[node.command]();
-      }
-      
-      // Simulate command execution with backend
+      // The executeCommand function handles both local and backend commands
       const result = await executeCommand(node);
       
       if (result.success) {

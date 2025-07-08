@@ -80,8 +80,26 @@ const FluidCanvas = ({
 
   // Handle node interactions
   const handleNodeInteraction = useCallback((nodeId, nodeType) => {
-    const node = nodes.find(n => n.id === nodeId);
-    if (!node) return;
+    // Find the node, whether it's a parent or a child
+    let node = null;
+    for (const parentNode of nodes) {
+      if (parentNode.id === nodeId) {
+        node = parentNode;
+        break;
+      }
+      if (parentNode.children) {
+        const foundChild = parentNode.children.find(child => child.id === nodeId);
+        if (foundChild) {
+          node = foundChild;
+          break;
+        }
+      }
+    }
+
+    if (!node) {
+      console.error(`FluidCanvas: Node with ID ${nodeId} not found.`);
+      return;
+    }
 
     console.log(`FluidCanvas: Node clicked: ${node.title} (${nodeId})`);
 
